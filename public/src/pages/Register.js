@@ -5,13 +5,16 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { registerRoute } from "../utils/APIRoutes";
 
 function Register() {
   const [values, setValues] = useState({
     username: "",
     email: "",
     password: "",
-    confirmpassword: "",
+    confirmPassword: "",
   });
 
   const toastOptions = {
@@ -22,9 +25,16 @@ function Register() {
     theme: "dark",
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleValidation(); // Add this line to call handleValidation
+    if (handleValidation()) {
+      const { password, confirmPassword, username, email } = values;
+      const { data } = await axios.post(registerRoute, {
+        username,
+        email,
+        password,
+      });
+    }
   };
 
   const handleValidation = () => {
@@ -80,7 +90,7 @@ function Register() {
           <input
             type="password"
             placeholder="Confirm Password"
-            name="confirmpassword"
+            name="confirmPassword"
             onChange={(e) => handleChange(e)}
           />
           <button type="submit">Sign Up</button>
@@ -123,7 +133,7 @@ const FormContainer = styled.div`
     flex-direction: column;
     gap: 2rem;
     background-color: #00000076;
-    padding: 3rem 5rem;
+    padding: 3rem 10rem;
     border-radius: 0.4rem;
     input {
       background-color: transparent;
@@ -131,7 +141,7 @@ const FormContainer = styled.div`
       border: #00000076.1rem solid #4e0eff;
       border-radius: 0.4rem;
       color: white;
-      width: 100%;
+      width: auto;
       font-size: 1rem;
       &:focus {
         border: 0.1rem solid #997af0;
@@ -160,6 +170,7 @@ const FormContainer = styled.div`
         color: #4e0eff;
         text-transform: none;
         font-weight: 200;
+        text-decoration: none;
       }
     }
   }
