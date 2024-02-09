@@ -25,35 +25,43 @@ function Register() {
     theme: "dark",
   };
 
+  const handleValidation = () => {
+    const { password, confirmPassword, username, email } = values;
+    if (password !== confirmPassword) {
+      toast.error(
+        "Password and confirm password should be same.",
+        toastOptions
+      );
+      return false;
+    } else if (username.length < 3) {
+      toast.error(
+        "Username should be greater than 3 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (password.length < 8) {
+      toast.error(
+        "Password should be equal or greater than 8 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (email === "") {
+      toast.error("Email is required.", toastOptions);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
-      const { password, confirmPassword, username, email } = values;
+      const { email, username, password } = values;
       const { data } = await axios.post(registerRoute, {
         username,
         email,
         password,
       });
-    }
-  };
-
-  const handleValidation = () => {
-    const { password, confirmpassword, username, email } = values;
-    if (password !== confirmpassword) {
-      toast.error("Password and confirm password should be same", toastOptions);
-      return false;
-    } else if (username.length < 3) {
-      toast.error("Username should be greater than 3 characters", toastOptions);
-      return false;
-    } else if (password.length < 8) {
-      toast.error(
-        "Password should be equal or greater than 8 characters",
-        toastOptions
-      );
-      return false;
-    } else if (email === "") {
-      toast.error("Email is required", toastOptions);
-      return false;
     }
   };
 
@@ -133,7 +141,7 @@ const FormContainer = styled.div`
     flex-direction: column;
     gap: 2rem;
     background-color: #00000076;
-    padding: 3rem 10rem;
+    padding: 3rem 5rem;
     border-radius: 0.4rem;
     input {
       background-color: transparent;
