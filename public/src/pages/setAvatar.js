@@ -10,5 +10,15 @@ import axios from "axios";
 import { setAvatarRoute } from "../utils/APIRoutes";
 
 export default function SetAvatar() {
-  return <div>setAvatar</div>;
+  const api = "https://api.multiavatar.com/45678945";
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <Container>SetAvatar</Container>
+      <ToastContainer />
+    </>
+  );
 }
+
+const Container = styled.div``;
