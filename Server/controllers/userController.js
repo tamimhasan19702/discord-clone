@@ -65,3 +65,4 @@ module.exports.setAvatar = async (req, res, next) => {
     console.log(err);
   }
 };
+module.exports.allUsers = async (req, res, next) => {};
