@@ -12,24 +12,29 @@ function Chat() {
   const [currentUser, setCurrentUser] = useState(undefined);
   const navigate = useNavigate();
 
-  useEffect(async () => {
-    if (!localStorage.getItem("chat-app-user")) {
-      navigate("/");
-    } else {
-      setCurrentUser(await JSON.parse(localStorage.getItem("chat-app-user")));
-    }
-  }, []);
-
-  useEffect(async () => {
-    if (currentUser) {
-      if (currentUser.isAvatarImageSet) {
-        const data = await axios.get(`${allUserRoutes}/${currentUser._id}`);
-        setContacts(data.data);
-      } else {
-        navigate("/setavatar");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (!localStorage.getItem("chat-app-user")) {
+          navigate("/");
+        } else {
+          const user = JSON.parse(localStorage.getItem("chat-app-user"));
+          setCurrentUser(user);
+          if (user && user.isAvatarImageSet) {
+            const response = await axios.get(`${allUserRoutes}/${user._id}`);
+            setContacts(response.data);
+          } else {
+            navigate("/setavatar");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        // Handle error appropriately (e.g., show error message to user)
       }
-    }
-  }, [currentUser]);
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <Container>
