@@ -17,6 +17,7 @@ module.exports.login = async (req, res, next) => {
     next(ex);
   }
 };
+
 module.exports.register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -38,6 +39,7 @@ module.exports.register = async (req, res, next) => {
     next(ex);
   }
 };
+
 module.exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({ _id: { $ne: req.params.id } }).select([
@@ -51,6 +53,7 @@ module.exports.getAllUsers = async (req, res, next) => {
     next(ex);
   }
 };
+
 module.exports.setAvatar = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -71,6 +74,7 @@ module.exports.setAvatar = async (req, res, next) => {
     next(ex);
   }
 };
+
 module.exports.logOut = (req, res, next) => {
   try {
     if (!req.params.id) return res.json({ msg: "User id is required " });
