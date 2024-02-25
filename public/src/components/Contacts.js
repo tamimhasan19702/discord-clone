@@ -10,9 +10,7 @@ function Contacts({ contacts, currentUser }) {
   const [currentSelected, setCurrentSelected] = useState(undefined);
   useEffect(() => {
     const fetchData = async () => {
-      const data = JSON.parse(
-        localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-      );
+      const data = JSON.parse(localStorage.getItem("chat-app-user"));
       setCurrentUserName(data.username);
       setCurrentUserImage(data.avatarImage);
     };
