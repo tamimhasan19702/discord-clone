@@ -4,20 +4,25 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 
-function Contacts({ contacts, currentUser }) {
+function Contacts({ contacts, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
   useEffect(() => {
     const fetchData = async () => {
-      const data = JSON.parse(localStorage.getItem("chat-app-user"));
-      setCurrentUserName(data.username);
-      setCurrentUserImage(data.avatarImage);
+      try {
+        const data = JSON.parse(localStorage.getItem("chat-app-user"));
+        setCurrentUserName(data.username);
+        setCurrentUserImage(data.avatarImage);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
     fetchData();
   }, []);
-  const changeCurrentChat = (index) => {
+  const changeCurrentChat = (index, contact) => {
     setCurrentSelected(index);
+    changeChat(contact);
   };
   return (
     <>

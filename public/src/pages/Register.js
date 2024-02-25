@@ -1,16 +1,23 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { registerRoute } from "../utils/APIRoutes";
 
-function Register() {
+export default function Register() {
   const navigate = useNavigate();
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "dark",
+  };
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -18,12 +25,14 @@ function Register() {
     confirmPassword: "",
   });
 
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 5000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
+  useEffect(() => {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/");
+    }
+  }, []);
+
+  const handleChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
   };
 
   const handleValidation = () => {
@@ -54,8 +63,8 @@ function Register() {
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     if (handleValidation()) {
       const { email, username, password } = values;
       const { data } = await axios.post(registerRoute, {
@@ -63,27 +72,27 @@ function Register() {
         email,
         password,
       });
+
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       }
       if (data.status === true) {
-        localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(data.user)
+        );
         navigate("/");
       }
     }
   };
 
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-  };
-
   return (
     <>
       <FormContainer>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>Snappy</h1>
+            <h1>snappy</h1>
           </div>
           <input
             type="text"
@@ -109,9 +118,9 @@ function Register() {
             name="confirmPassword"
             onChange={(e) => handleChange(e)}
           />
-          <button type="submit">Sign Up</button>
+          <button type="submit">Create User</button>
           <span>
-            Already have an account? <Link to="/login">Login</Link>
+            Already have an account ? <Link to="/login">Login.</Link>
           </span>
         </form>
       </FormContainer>
@@ -188,5 +197,3 @@ const FormContainer = styled.div`
     }
   }
 `;
-
-export default Register;

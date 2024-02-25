@@ -8,38 +8,57 @@ import { allUserRoutes } from "../utils/APIRoutes";
 import Contacts from "../components/Contacts";
 
 function Chat() {
-  const [contacts, setContacts] = useState([]);
-  const [currentUser, setCurrentUser] = useState(undefined);
   const navigate = useNavigate();
-
+  const [contacts, setContacts] = useState([]);
+  const [currentChat, setCurrentChat] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(undefined);
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
         if (!localStorage.getItem("chat-app-user")) {
-          navigate("/");
+          navigate("/login");
         } else {
           const user = JSON.parse(localStorage.getItem("chat-app-user"));
           setCurrentUser(user);
-          if (user && user.isAvatarImageSet) {
-            const response = await axios.get(`${allUserRoutes}/${user._id}`);
-            setContacts(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
+  useEffect(() => {
+    const fetchData = async () => {
+      let isMounted = true;
+      try {
+        if (currentUser) {
+          if (currentUser.isAvatarImageSet) {
+            const response = await axios.get(
+              `${allUserRoutes}/${currentUser._id}`
+            );
+            if (isMounted) {
+              setContacts(response.data);
+            }
           } else {
-            navigate("/setavatar");
+            navigate("/setAvatar");
           }
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        // Handle error appropriately (e.g., show error message to user)
+        console.error(error);
       }
+      return () => {
+        isMounted = false;
+      };
     };
-
-    fetchUserData();
-  }, []);
-
+    fetchData();
+  }, [currentUser, navigate]);
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  };
   return (
     <Container>
       <div className="container">
-        <Contacts contacts={contacts} currentUser={currentUser} />
+        <Contacts contacts={contacts} changeChat={handleChatChange} />
       </div>
     </Container>
   );

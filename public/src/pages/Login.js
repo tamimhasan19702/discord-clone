@@ -1,50 +1,49 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 import { loginRoute } from "../utils/APIRoutes";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    username: "",
-    password: "",
-  });
-
+  const [values, setValues] = useState({ username: "", password: "" });
   const toastOptions = {
     position: "bottom-right",
-    autoClose: 5000,
+    autoClose: 8000,
     pauseOnHover: true,
     draggable: true,
     theme: "dark",
   };
-
   useEffect(() => {
-    if (!localStorage.getItem("chat-app-user")) {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
     }
   }, []);
 
-  const handleValidation = () => {
-    const { password, username } = values;
-    if (password === "") {
+  const handleChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
+  };
+
+  const validateForm = () => {
+    const { username, password } = values;
+    if (username === "") {
       toast.error("Email and Password is required.", toastOptions);
       return false;
-    } else if (username.length === "") {
+    } else if (password === "") {
       toast.error("Email and Password is required.", toastOptions);
       return false;
     }
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (handleValidation()) {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (validateForm()) {
       const { username, password } = values;
       const { data } = await axios.post(loginRoute, {
         username,
@@ -54,42 +53,40 @@ function Login() {
         toast.error(data.msg, toastOptions);
       }
       if (data.status === true) {
-        localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(data.user)
+        );
+
         navigate("/");
       }
     }
   };
 
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-  };
-
   return (
     <>
       <FormContainer>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>Snappy</h1>
+            <h1>snappy</h1>
           </div>
           <input
             type="text"
             placeholder="Username"
             name="username"
             onChange={(e) => handleChange(e)}
-            min={`3`}
+            min="3"
           />
-
           <input
             type="password"
             placeholder="Password"
             name="password"
             onChange={(e) => handleChange(e)}
           />
-
-          <button type="submit">Login user</button>
+          <button type="submit">Log In</button>
           <span>
-            Don't have a account ? <Link to="/register">Register</Link>
+            Don't have an account ? <Link to="/register">Create One.</Link>
           </span>
         </form>
       </FormContainer>
@@ -127,7 +124,7 @@ const FormContainer = styled.div`
     gap: 2rem;
     background-color: #00000076;
     border-radius: 2rem;
-    padding: 3rem 5rem;
+    padding: 5rem;
   }
   input {
     background-color: transparent;
@@ -166,5 +163,3 @@ const FormContainer = styled.div`
     }
   }
 `;
-
-export default Login;
