@@ -27,13 +27,15 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
+  name: z.string().min(1, { message: "Server name is required" }),
   imageUrl: z.string().min(1, { message: "Image URL is required" }),
 });
 
 export const InitialModal = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,6 +49,12 @@ export const InitialModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  });
+
+  if (!isMounted) return null;
 
   return (
     <Dialog open>
@@ -92,7 +100,9 @@ export const InitialModal = () => {
             </div>
 
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button disabled={isLoading}>Create</Button>
+              <Button variant={"primary"} disabled={isLoading}>
+                Create
+              </Button>
             </DialogFooter>
           </form>
         </Form>
