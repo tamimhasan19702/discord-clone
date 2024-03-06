@@ -16,11 +16,9 @@ interface NavigationItemProps {
 
 const NavigationItem = ({ id, imageUrl, name }: NavigationItemProps) => {
   const params = useParams();
-  const router = useRouter;
+  const router = useRouter();
   const onClick = () => {
-    router
-      .push(`/servers/${id}`)
-      .catch((err) => console.warn("Failed to navigate:", err));
+    router.push(`/servers/${id}`);
   };
   return (
     <ActionToolTip side="right" align="start" label={name}>
