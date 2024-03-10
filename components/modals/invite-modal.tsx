@@ -14,6 +14,7 @@ import {
 
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import { useOrigin } from "@/hooks/use-origin";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,9 +26,12 @@ const formSchema = z.object({
 });
 
 export const InviteModal = () => {
-  const { isOpen, type, onClose } = useModal();
+  const { isOpen, type, onClose, data } = useModal();
+  const origin = useOrigin();
 
+  const { server } = data;
   const isModalOpen = isOpen && type === "invite";
+  const inviteUrl = `${origin}/invite/${server?.inviteCode}`;
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
@@ -44,7 +48,7 @@ export const InviteModal = () => {
           <div className="flex items-center mt-2 gap-x-2">
             <Input
               className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-              value="invite-link"
+              value={inviteUrl}
             />
             <Button size={"icon"}>
               <Copy className="w-4 h-4" />
