@@ -3,11 +3,11 @@
 "use client";
 
 import * as z from "zod";
+import { useState } from "react";
 
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -18,7 +18,8 @@ import { useOrigin } from "@/hooks/use-origin";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Copy, RefreshCcw } from "lucide-react";
+import { Check, Copy, RefreshCcw } from "lucide-react";
+import axios from "axios";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Server name is required" }),
@@ -26,12 +27,35 @@ const formSchema = z.object({
 });
 
 export const InviteModal = () => {
-  const { isOpen, type, onClose, data } = useModal();
+  const { isOpen, type, onClose, data, onOpen } = useModal();
   const origin = useOrigin();
+
+  const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { server } = data;
   const isModalOpen = isOpen && type === "invite";
   const inviteUrl = `${origin}/invite/${server?.inviteCode}`;
+
+  const onCopy = () => {
+    navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+  };
+
+  const onNew = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.patch(
+        `/api/servers/${server?.id}/invite-code`
+      );
+      onOpen("invite", { server: response.data });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
@@ -49,12 +73,19 @@ export const InviteModal = () => {
             <Input
               className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
               value={inviteUrl}
+              disabled={isLoading}
             />
-            <Button size={"icon"}>
-              <Copy className="w-4 h-4" />
+            <Button disabled={isLoading} size={"icon"} onClick={onCopy}>
+              {copied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
             </Button>
           </div>
           <Button
+            onClick={onNew}
+            disabled={isLoading}
             variant={"link"}
             size={"sm"}
             className="text-xs text-zinc-500 mt-4">
