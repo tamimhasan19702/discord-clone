@@ -1,7 +1,7 @@
 /** @format */
 
 "use client";
-
+import qs from "query-string";
 import * as z from "zod";
 import {
   Dialog,
@@ -39,7 +39,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-
+import { MemberRole } from "@prisma/client";
+import axios from "axios";
 const formSchema = z.object({
   name: z.string().min(1, { message: "Server name is required" }),
   imageUrl: z.string().min(1, { message: "Image URL is required" }),
@@ -57,6 +58,27 @@ export const MembersModal = () => {
 
   const { server } = data as { server: ServerWithMemberWithProfiles };
   const isModalOpen = isOpen && type === "members";
+
+  const onRoleChange = async (memberId: string, role: MemberRole) => {
+    try {
+      setLoadingId(memberId);
+      const url = qs.stringifyUrl({
+        url: `/api/members/${memberId}`,
+        query: {
+          serverId: server?.id,
+          memberId,
+        },
+      });
+
+      const response = await axios.patch(url, {
+        role,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingId("");
+    }
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
@@ -81,7 +103,7 @@ export const MembersModal = () => {
                 </div>
                 <p className="text-xs text-zinc-500">{member.profile?.email}</p>
               </div>
-              {server.profileId == member.profileId &&
+              {server.profileId !== member.profileId &&
                 loadingId !== member.id && (
                   <div className="ml-auto">
                     <DropdownMenu>
