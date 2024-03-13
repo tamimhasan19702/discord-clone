@@ -15,7 +15,30 @@ import { useModal } from "@/hooks/use-modal-store";
 import { ServerWithMemberWithProfiles } from "@/types";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserAvatar } from "../user-avatar";
-import { ShieldAlert, ShieldCheck } from "lucide-react";
+import {
+  Check,
+  Gavel,
+  Loader2,
+  MoreVertical,
+  Shield,
+  ShieldAlert,
+  ShieldCheck,
+  ShieldCheckIcon,
+  ShieldQuestion,
+} from "lucide-react";
+import { useState } from "react";
+
+import {
+  DropdownMenuContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSubContent,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Server name is required" }),
@@ -30,6 +53,7 @@ const roleIconMap = {
 
 export const MembersModal = () => {
   const { isOpen, type, onClose, data, onOpen } = useModal();
+  const [loadingId, setLoadingId] = useState();
 
   const { server } = data as { server: ServerWithMemberWithProfiles };
   const isModalOpen = isOpen && type === "members";
@@ -57,6 +81,50 @@ export const MembersModal = () => {
                 </div>
                 <p className="text-xs text-zinc-500">{member.profile?.email}</p>
               </div>
+              {server.profileId == member.profileId &&
+                loadingId !== member.id && (
+                  <div className="ml-auto">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <MoreVertical className="h-4 w-4 text-zinc-500" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="left">
+                        <DropdownMenuSub>
+                          <DropdownMenuSubTrigger className="flex items-center">
+                            <ShieldQuestion className="w-4 h-4 mr-2" />
+                            <span>Role</span>
+                          </DropdownMenuSubTrigger>
+                          <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuItem>
+                                <Shield className="h-4 w-4 mr-2" />
+                                Guest
+                                {member.role === "GUEST" && (
+                                  <Check className="h-4 w-4 ml-auto" />
+                                )}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <ShieldCheckIcon className="h-4 w-4 mr-2" />
+                                Moderator
+                                {member.role === "MODERATOR" && (
+                                  <Check className="h-4 w-4 ml-auto" />
+                                )}
+                              </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <Gavel className="h-4 w-4 mr-2" />
+                          Kick
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+              {loadingId === member.id && (
+                <Loader2 className="animate-spin text-zinc-500 ml-auto w-4 h-4" />
+              )}
             </div>
           ))}
         </ScrollArea>
