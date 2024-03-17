@@ -12,10 +12,13 @@ interface InviteCodePageProps {
   };
 }
 
-const handleInviteCode = async (
-  params: InviteCodePageProps["params"],
-  profileId: string
-) => {
+const InviteCodePage = async ({ params }: InviteCodePageProps) => {
+  const profile = await currentProfile();
+
+  if (!profile) {
+    return redirectToSignIn();
+  }
+
   if (!params.inviteCode) {
     return redirect("/");
   }
@@ -25,14 +28,14 @@ const handleInviteCode = async (
       inviteCode: params.inviteCode,
       members: {
         some: {
-          profileId: profileId,
+          profileId: profile.id,
         },
       },
     },
   });
 
   if (existingServer) {
-    return `/servers/${existingServer.id}`;
+    return redirect(`/servers/${existingServer.id}`);
   }
 
   const server = await db.server.update({
@@ -43,7 +46,7 @@ const handleInviteCode = async (
       members: {
         create: [
           {
-            profileId: profileId,
+            profileId: profile.id,
           },
         ],
       },
@@ -51,23 +54,7 @@ const handleInviteCode = async (
   });
 
   if (server) {
-    return `/servers/${server.id}`;
-  }
-
-  return null;
-};
-
-const InviteCodePage = async ({ params }: InviteCodePageProps) => {
-  const profile = await currentProfile();
-
-  if (!profile) {
-    return redirectToSignIn();
-  }
-
-  const redirectUrl = await handleInviteCode(params, profile.id);
-
-  if (redirectUrl) {
-    return redirect(redirectUrl);
+    return redirect(`/servers/${server.id}`);
   }
 
   return null;
