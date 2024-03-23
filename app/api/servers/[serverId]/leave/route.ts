@@ -1,0 +1,51 @@
+/** @format */
+
+import { currentProfile } from "@/lib/current-profile";
+import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: { serverId: string } }
+) {
+  try {
+    const profile = currentProfile();
+    if (!profile) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    if (!params || !params.serverId) {
+      return new NextResponse("ServerId is missing", { status: 400 });
+    }
+
+    const server = await db.server.update({
+      where: {
+        id: params.serverId,
+        profileId: {
+          not: profile.id,
+        },
+        members: {
+          some: {
+            profileId: profile.id,
+          },
+        },
+      },
+      data: {
+        members: {
+          deleteMany: {
+            profileId: profile.id,
+          },
+        },
+      },
+    });
+
+    if (!server) {
+      return new NextResponse("Server not found", { status: 404 });
+    }
+
+    return NextResponse.json(server);
+  } catch (error) {
+    console.error("[SERVER_ID_PATCH]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
