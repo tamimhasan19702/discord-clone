@@ -1,21 +1,23 @@
 /** @format */
 
+import { NextResponse } from "next/server";
+
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
   { params }: { params: { serverId: string } }
 ) {
   try {
-    const profile = currentProfile();
+    const profile = await currentProfile();
+
     if (!profile) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!params || !params.serverId) {
-      return new NextResponse("ServerId is missing", { status: 400 });
+    if (!params.serverId) {
+      return new NextResponse("Server ID missing", { status: 400 });
     }
 
     const server = await db.server.update({
@@ -39,13 +41,9 @@ export async function PATCH(
       },
     });
 
-    if (!server) {
-      return new NextResponse("Server not found", { status: 404 });
-    }
-
     return NextResponse.json(server);
   } catch (error) {
-    console.error("[SERVER_ID_PATCH]", error);
+    console.log("[SERVER_ID_LEAVE]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
