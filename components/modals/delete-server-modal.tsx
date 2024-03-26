@@ -30,7 +30,7 @@ export const DeleteServerModal = () => {
     try {
       setIsLoading(true);
 
-      await axios.patch(`/api/servers/${server?.id}/leave`);
+      await axios.delete(`/api/servers/${server?.id}`);
 
       onClose();
       router.refresh();
@@ -50,12 +50,11 @@ export const DeleteServerModal = () => {
             Delete Server
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
-            Are you sure you want to do this?
-            <br />
-            <span className="font-semibold text-indigo-500">
+            Are you sure you want to do this? <br />
+            <span className="text-indigo-500 font-semibold">
               {server?.name}
-            </span>
-            &nbsp; will be permanently deleted!!
+            </span>{" "}
+            will be permanently deleted.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="bg-gray-100 px-6 py-4">
