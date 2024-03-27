@@ -7,7 +7,7 @@ import ServerHeader from "./server-header";
 import { ScrollArea } from "../ui/scroll-area";
 import { ServerSearch } from "./server-search";
 import { ChannelType, MemberRole } from "@prisma/client";
-import { Hash, ShieldAlert, ShieldCheck } from "lucide-react";
+import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
 import { channel } from "diagnostics_channel";
 
 interface ServerHeaderProps {
@@ -16,8 +16,8 @@ interface ServerHeaderProps {
 
 const iconMap = {
   [ChannelType.TEXT]: <Hash className="mr-2 h-4 w-4" />,
-  [ChannelType.AUDIO]: <Hash className="mr-2 h-4 w-4" />,
-  [ChannelType.VIDEO]: <Hash className="mr-2 h-4 w-4" />,
+  [ChannelType.AUDIO]: <Mic className="mr-2 h-4 w-4" />,
+  [ChannelType.VIDEO]: <Video className="mr-2 h-4 w-4" />,
 };
 
 const roleIconMap = {
