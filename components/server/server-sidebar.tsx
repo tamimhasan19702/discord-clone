@@ -8,7 +8,8 @@ import { ScrollArea } from "../ui/scroll-area";
 import { ServerSearch } from "./server-search";
 import { ChannelType, MemberRole } from "@prisma/client";
 import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
-import { channel } from "diagnostics_channel";
+import { Separator } from "../ui/separator";
+import ServerSection from "./server-section";
 
 interface ServerHeaderProps {
   serverId: string;
@@ -25,7 +26,7 @@ const roleIconMap = {
   [MemberRole.MODERATOR]: (
     <ShieldCheck className="mr-2 h-4 w-4 text-indigo-500" />
   ),
-  [MemberRole.ADMIN]: <ShieldAlert className="mr-2 h-4 w-4 text-indigo-500" />,
+  [MemberRole.ADMIN]: <ShieldAlert className="mr-2 h-4 w-4 text-rose-500" />,
 };
 
 const ServerSidebar = async ({ serverId }: ServerHeaderProps) => {
@@ -123,6 +124,17 @@ const ServerSidebar = async ({ serverId }: ServerHeaderProps) => {
             ]}
           />
         </div>
+        <Separator className="bg-zinc-500 dark:bg-zinc-700 rounded-md my-2" />
+        {!!textChannels?.length && (
+          <div className="mb-2">
+            <ServerSection
+              sectionType="channel"
+              channelType={ChannelType.TEXT}
+              role={role}
+              label="Text Channels"
+            />
+          </div>
+        )}
       </ScrollArea>
     </div>
   );
