@@ -10,8 +10,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "./ui/button";
+import NavigationSidebar from "./navigation/navigation-sidebar";
+import ServerSidebar from "./server/server-sidebar";
 
-const MobileToggle = () => {
+const MobileToggle = ({ serverId }: { serverId: string }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -19,14 +21,11 @@ const MobileToggle = () => {
           <Menu />
         </Button>
       </SheetTrigger>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Are you absolutely sure?</SheetTitle>
-          <SheetDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </SheetDescription>
-        </SheetHeader>
+      <SheetContent side="right" className="p-0 flex gap-0">
+        <div className="w=[72px]">
+          <NavigationSidebar />
+        </div>
+        <ServerSidebar serverId={serverId} />
       </SheetContent>
     </Sheet>
   );
