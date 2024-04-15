@@ -4,6 +4,7 @@ import { currentProfile } from "@/lib/current-profile";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import ChatHeader from "@/components/chat/chat-header";
 
 interface ChannelIdPageProps {
   params: {
@@ -18,7 +19,7 @@ const ChannelIdPage = async ({ params }: ChannelIdPageProps) => {
     return redirectToSignIn();
   }
 
-  const channel = await db.member.findUnique({
+  const channel = await db.channel.findUnique({
     where: {
       id: params.channelId,
     },
@@ -31,13 +32,17 @@ const ChannelIdPage = async ({ params }: ChannelIdPageProps) => {
     },
   });
 
-  // if (!channel || !member) {
-  //   redirect("/");
-  // }
+  if (!channel || !member) {
+    redirect("/");
+  }
 
   return (
     <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
-      chatIdpage
+      <ChatHeader
+        name={channel.name}
+        serverId={channel.serverId}
+        type="channel"
+      />
     </div>
   );
 };
