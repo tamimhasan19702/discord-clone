@@ -63,6 +63,10 @@ model Member{
   server Server @relation(fields: [serverId], references: [id], onDelete: Cascade )
 
   messages Message[]
+  directMessages DirectMessage[]
+
+  conversationsInitiated Conversations[] @relation("MemberOne")
+  conversationsReceived Conversations[] @relation("MemberTwo")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,3 +119,45 @@ model Message {
   @@index([channelId])
   @@index([memberId])
 }
+
+
+
+ model Conversations {
+  id String @id @default(uuid())
+
+  memberOneId String
+  memberOne Member @relation("MemberOne", fields: [memberOneId], references: [id], onDelete: Cascade)
+  
+  memberTwoId String
+  memberTwo Member @relation("MemberTwo", fields: [memberTwoId], references: [id], onDelete: Cascade)
+
+  directMessages DirectMessage[]
+
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([memberOneId])
+  @@index([memberTwoId])
+
+  @@unique([memberOneId, memberTwoId])
+ }
+
+ model DirectMessage {
+  id String @id @default(uuid())
+  content String @db.Text
+  fileUrl String? @db.Text
+
+  memberId String
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  consversationId String
+  conversation Conversations @relation(fields: [consversationId], references: [id], onDelete: Cascade)
+
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deleted Boolean @default(false)
+ 
+ @@index([memberId])
+ @@index([consversationId])
+ }
