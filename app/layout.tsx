@@ -32,7 +32,6 @@ export default function RootLayout({
             enableSystem={false}
             storageKey="discord-clone-theme">
             <SocketProvider>
-              {" "}
               <ModalProvider />
               {children}
             </SocketProvider>

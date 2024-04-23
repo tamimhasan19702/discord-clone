@@ -3,8 +3,7 @@
 "use client";
 
 import { useSocket } from "./providers/socket-provider";
-import { Badge } from "lucide-react";
-
+import { Badge } from "./ui/badge";
 export const SocketIndicator = () => {
   const { isConnected } = useSocket();
 
