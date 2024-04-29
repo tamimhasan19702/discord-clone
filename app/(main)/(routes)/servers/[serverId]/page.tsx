@@ -5,19 +5,19 @@ import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-interface ServerIdPageProps {
+interface ServerIdProps {
   params: {
     serverId: string;
   };
 }
-
-const ServerIdPage = async ({ params }: ServerIdPageProps) => {
+const ServerIdPage = async ({ params }: ServerIdProps) => {
   const profile = await currentProfile();
+
   if (!profile) {
     return redirectToSignIn();
   }
 
-  const server = await db.server.findUnique({
+  const server = db.server.findUnique({
     where: {
       id: params.serverId,
       members: {
@@ -44,7 +44,7 @@ const ServerIdPage = async ({ params }: ServerIdPageProps) => {
     return null;
   }
 
-  return redirect(`/servers/${params.serverId}/channels/${initialChannel?.id}`);
+  return redirect(`/servers/${params.serverId}/channels/${initialChannel.id}`);
 };
 
 export default ServerIdPage;
