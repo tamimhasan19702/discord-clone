@@ -1,9 +1,9 @@
 /** @format */
 
-import { currentProfilePage } from "@/lib/current-profile-pages";
 import { db } from "@/lib/db";
 import { NextApiResponseServerIo } from "@/types";
 import { NextApiRequest } from "next";
+import { currentProfilePages } from "@/lib/current-profile-pages";
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,7 +14,7 @@ export default async function handler(
   }
 
   try {
-    const profile = await currentProfilePage(req);
+    const profile = await currentProfilePages(req);
     const { content, fileUrl } = req.body;
     const { serverId, channelId } = req.query;
 
@@ -87,7 +87,7 @@ export default async function handler(
 
     res?.socket?.server?.io?.emit(channelKey, message);
 
-    return res.status(200).json({ message });
+    return res.status(200).json({ message: "Message created" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal server error" });
