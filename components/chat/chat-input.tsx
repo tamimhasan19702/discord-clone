@@ -12,6 +12,7 @@ import { Plus, Smile } from "lucide-react";
 import axios from "axios";
 import qs from "query-string";
 import { useModal } from "@/hooks/use-modal-store";
+import EmojiPicker from "../emoji-picker";
 
 interface ChatInputProps {
   apiUrl: string;
@@ -79,7 +80,7 @@ function ChatInput({ apiUrl, query, name, type }: ChatInputProps) {
                     {...field}
                   />
                   <div className="absolute right-8 top-7">
-                    <Smile />
+                    <EmojiPicker />
                   </div>
                 </div>
               </FormControl>
