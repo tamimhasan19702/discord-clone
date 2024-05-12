@@ -64,6 +64,7 @@ export const MembersModal = () => {
 
   const onKick = async (memberId: string) => {
     try {
+      //@ts-ignore
       setLoadingId(memberId);
       const url = qs.stringifyUrl({
         url: `/api/members/${memberId}`,
@@ -78,12 +79,14 @@ export const MembersModal = () => {
     } catch (err) {
       console.log(err);
     } finally {
+      //@ts-ignore
       setLoadingId("");
     }
   };
 
   const onRoleChange = async (memberId: string, role: MemberRole) => {
     try {
+      //@ts-ignore
       setLoadingId(memberId);
       const url = qs.stringifyUrl({
         url: `/api/members/${memberId}`,
@@ -101,6 +104,7 @@ export const MembersModal = () => {
     } catch (err) {
       console.log(err);
     } finally {
+      //@ts-ignore
       setLoadingId("");
     }
   };
